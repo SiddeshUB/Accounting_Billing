@@ -172,6 +172,37 @@
               height: calc(100vh - 80px);
             }
         }
+
+        /* Modal Styles */
+        .modal {
+            display: none; 
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 8px;
+            width: 400px;
+            position: relative;
+        }
+
+        .modal .close {
+            color: #333;
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -190,6 +221,35 @@
         <div class="menu-item" onclick="openDiscountVoucherForm()"><i>🎫</i> Discount Voucher</div>
         <div class="menu-item" data-target="settings"><i>⚙️</i> Settings</div>
         <div class="menu-item" data-target="logout"><i>🚪</i> Logout</div>
+        <div class="menu-item active" data-target="dashboard">
+            <i>📊</i> Dashboard
+        </div>
+        <div class="menu-item" data-target="ledger">
+            <i>📒</i> Ledger
+        </div>
+        <div class="menu-item">
+            <a href="/invoices" style="color: inherit; text-decoration: none;">
+                <i>🧾</i> Invoices
+            </a>
+        </div>
+        <div class="menu-item" data-target="customers">
+            <i>👥</i> Customers
+        </div>
+        <div class="menu-item" data-target="reports">
+            <i>📈</i> Reports
+        </div>
+        <div class="menu-item" data-target="payment-voucher">
+            <i>💳</i> Payment Voucher
+        </div>
+        <div class="menu-item" data-target="discount-voucher">
+            <i>🎫</i> Discount Voucher
+        </div>
+        <div class="menu-item" data-target="settings">
+            <i>⚙️</i> Settings
+        </div>
+        <div class="menu-item" data-target="logout">
+            <i>🚪</i> Logout
+        </div>
     </div>
 
     <!-- Content Area -->
@@ -257,6 +317,7 @@
         <iframe id="discountVoucherFormFrame" class="discount-form-frame"></iframe>
 
         <!-- Ledger Section (table + iframe for new) -->
+        <!-- Ledger Section -->
         <div id="ledger" class="content-section">
             <div id="ledgerList">
                 <h2 class="section-title">General Ledger</h2>
@@ -299,51 +360,14 @@
             <iframe id="ledgerFormFrame" class="ledger-form-frame"></iframe>
         </div>
 
-        <!-- Invoices Section -->
-        <div id="invoices" class="content-section">
-            <h2 class="section-title">Invoices</h2>
-            <div style="margin-bottom: 1rem;">
-                <button class="btn">Create New Invoice</button>
-            </div>
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Invoice #</th>
-                        <th>Customer</th>
-                        <th>Date</th>
-                        <th>Amount</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>INV-001</td>
-                        <td>ABC Company</td>
-                        <td>2023-10-15</td>
-                        <td>$1,200.00</td>
-                        <td>Paid</td>
-                        <td>
-                            <button class="btn" style="padding: 0.3rem 0.7rem; font-size: 0.8rem;">View</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>INV-002</td>
-                        <td>XYZ Corp</td>
-                        <td>2023-10-14</td>
-                        <td>$850.50</td>
-                        <td>Pending</td>
-                        <td>
-                            <button class="btn" style="padding: 0.3rem 0.7rem; font-size: 0.8rem;">View</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
         <!-- Customers Section -->
         <div id="customers" class="content-section">
             <h2 class="section-title">Customers</h2>
+            
+            <!-- Add Customer Button -->
+            <button class="btn" id="addCustomerBtn" style="margin-bottom: 15px;">+ Add Customer</button>
+            
+            <!-- Customers Table -->
             <table class="data-table">
                 <thead>
                 <tr>
@@ -425,6 +449,8 @@
                 <button class="btn" style="margin-top: 1.5rem;">Confirm Logout</button>
             </div>
         </div>
+
+        <!-- Other sections (Reports, Payment Voucher, Discount Voucher, Settings, Logout) remain unchanged -->
     </div>
 
     <footer>
