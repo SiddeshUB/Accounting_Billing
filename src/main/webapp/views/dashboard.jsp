@@ -179,9 +179,11 @@
     <div class="header">
         <h1>Accounting</h1>
     </div>
+
     <!-- Side Menu -->
     <div class="side-menu">
         <div class="menu-item active" data-target="dashboard"><i>📊</i> Dashboard</div>
+        <!-- Ledger uses data-target like before (no custom onclick) -->
         <div class="menu-item" data-target="ledger"><i>📒</i> Ledger</div>
         <div class="menu-item" data-target="invoices"><i>🧾</i> Invoices</div>
         <div class="menu-item" data-target="customers"><i>👥</i> Customers</div>
@@ -244,7 +246,7 @@
         <div id="paymentVoucherList" style="display:none;">
             <h2 class="section-title">Payment Vouchers</h2>
             <button class="btn" type="button" onclick="openPaymentVoucherForm()">Create Payment Voucher</button>
-            <!-- ... (Insert your voucher table/list here or render dynamically) ... -->
+            <!-- your payment voucher table/list here if needed -->
         </div>
         <iframe id="paymentVoucherFormFrame" class="voucher-form-frame"></iframe>
 
@@ -252,7 +254,7 @@
         <div id="discountVoucherList" style="display:none;">
             <h2 class="section-title">Discount Vouchers</h2>
             <button class="btn" type="button" onclick="openDiscountVoucherForm()">Create Discount Voucher</button>
-            <!-- ... (Insert your discount voucher table/list here) ... -->
+            <!-- your discount voucher table/list here if needed -->
         </div>
         <iframe id="discountVoucherFormFrame" class="discount-form-frame"></iframe>
 
@@ -261,41 +263,35 @@
             <div id="ledgerList">
                 <h2 class="section-title">General Ledger</h2>
                 <button class="btn" type="button" onclick="openLedgerForm()">Create Ledger Entry</button>
+
                 <table class="data-table">
                     <thead>
                     <tr>
                         <th>Date</th>
+                        <th>Voucher</th>
                         <th>Account</th>
                         <th>Debit</th>
                         <th>Credit</th>
                         <th>Balance</th>
+                        <th>Narration</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td>2023-10-15</td>
-                        <td>Cash</td>
-                        <td>$1,200.00</td>
-                        <td>$0.00</td>
-                        <td>$1,200.00</td>
-                    </tr>
-                    <tr>
-                        <td>2023-10-14</td>
-                        <td>Accounts Receivable</td>
-                        <td>$0.00</td>
-                        <td>$350.50</td>
-                        <td>-$350.50</td>
-                    </tr>
-                    <tr>
-                        <td>2023-10-12</td>
-                        <td>Revenue</td>
-                        <td>$0.00</td>
-                        <td>$2,500.00</td>
-                        <td>$2,500.00</td>
-                    </tr>
+                    <c:forEach var="e" items="${entries}">
+                        <tr>
+                            <td><c:out value="${e.entryDate}"/></td>
+                            <td><c:out value="${e.voucherType}"/></td>
+                            <td><c:out value="${e.accountName}"/></td>
+                            <td><c:out value="${e.debitAmount}"/></td>
+                            <td><c:out value="${e.creditAmount}"/></td>
+                            <td><c:out value="${e.balance}"/></td>
+                            <td><c:out value="${e.narration}"/></td>
+                        </tr>
+                    </c:forEach>
                     </tbody>
                 </table>
             </div>
+
             <iframe id="ledgerFormFrame" class="ledger-form-frame"></iframe>
         </div>
 
@@ -430,22 +426,25 @@
     <footer>
         <small>&copy; <c:out value="${pageContext.request.serverName}"/> Accounting App</small>
     </footer>
+
     <script>
-        // Menu navigation functionality
+        // Menu navigation functionality (original pattern)
         document.addEventListener('DOMContentLoaded', function() {
             const menuItems = document.querySelectorAll('.side-menu .menu-item');
             const contentSections = document.querySelectorAll('.content-section');
 
             menuItems.forEach(item => {
                 item.addEventListener('click', function() {
-                    if(item.getAttribute("onclick")) return;
+                    // Skip items that use custom onclick logic (payment, discount)
+                    if (item.getAttribute("onclick")) return;
+
                     menuItems.forEach(mi => mi.classList.remove('active'));
                     this.classList.add('active');
                     contentSections.forEach(section => section.classList.remove('active'));
                     const targetId = this.getAttribute('data-target');
-                    if(targetId) {
+                    if (targetId) {
                         document.getElementById(targetId).classList.add('active');
-                        // Hide all voucher/ledger iframes and lists too!
+                        // Hide all voucher/ledger iframes and reset lists
                         document.getElementById("paymentVoucherFormFrame").style.display = "none";
                         document.getElementById("paymentVoucherList").style.display = "none";
                         document.getElementById("discountVoucherFormFrame").style.display = "none";
@@ -466,9 +465,10 @@
             document.getElementById("discountVoucherList").style.display = "none";
             document.getElementById("ledgerFormFrame").style.display = "none";
             document.getElementById("ledgerList").style.display = "none";
-            // Load form
+            // Load payment voucher form
             document.getElementById("paymentVoucherFormFrame").src = "${pageContext.request.contextPath}/vouchers/payment/new";
         }
+
         function closePaymentVoucherForm() {
             document.getElementById("paymentVoucherFormFrame").style.display = "none";
             document.getElementById("paymentVoucherFormFrame").src = "";
@@ -485,24 +485,26 @@
             document.getElementById("ledgerList").style.display = "none";
             document.getElementById("discountVoucherFormFrame").src = "${pageContext.request.contextPath}/vouchers/discount/new";
         }
+
         function closeDiscountVoucherForm() {
             document.getElementById("discountVoucherFormFrame").style.display = "none";
             document.getElementById("discountVoucherFormFrame").src = "";
             document.getElementById("dashboard").classList.add("active");
         }
 
-        // Ledger form
+        // Ledger form (open inside iframe)
         function openLedgerForm() {
             document.getElementById("ledgerList").style.display = "none";
             document.getElementById("ledgerFormFrame").src = "${pageContext.request.contextPath}/ledger/new";
             document.getElementById("ledgerFormFrame").style.display = "block";
         }
+
         function closeLedgerForm() {
             document.getElementById("ledgerFormFrame").style.display = "none";
             document.getElementById("ledgerFormFrame").src = "";
             document.getElementById("ledgerList").style.display = "block";
         }
-        // These close*Form functions must be called from the respective iframe ("parent.closePaymentVoucherForm()" etc).
+        // These close*Form functions must be called from the respective iframe ("parent.closePaymentVoucherForm()", etc).
     </script>
 </body>
 </html>

@@ -1,7 +1,6 @@
 package com.accounting.controller;
 
-import com.accounting.model.PaymentVoucher;
-import com.accounting.model.DiscountVoucher;
+import com.accounting.service.LedgerService;   // <-- add this
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,8 +8,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class SetupController {
 
-	@GetMapping("/")
-	public String dashboard() {
-	    return "dashboard";
-	}
+    private final LedgerService ledgerService;
+
+    // constructor injection
+    public SetupController(LedgerService ledgerService) {
+        this.ledgerService = ledgerService;
+    }
+
+    @GetMapping({"/", "/dashboard"})
+    public String dashboard(Model model) {
+        model.addAttribute("entries", ledgerService.listAll());
+        return "dashboard";
+    }
+
 }
